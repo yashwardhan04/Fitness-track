@@ -1,91 +1,68 @@
-MONGODB_URL=your_mongodb_connection_string
-JWT=your_jwt_secret
-# Optional (for emails)
-SMTP_HOST=smtp.example.com
-SMTP_PORT=587
-SMTP_USER=your_user
-SMTP_PASS=your_pass
-EMAIL_FROM=no-reply@example.com
-# PORT provided by platform; fallback locally:
-PORT=8080
-```
+# 💪 Fitness Tracker
 
-Client (Production via Netlify `netlify.toml`):
-- `REACT_APP_API_URL=https://fitness-tracker-pklg.onrender.com/api`
-- `REACT_APP_BACKEND_URL=https://fitness-tracker-pklg.onrender.com`
+A clean and modern **fitness dashboard** to track workouts, visualize progress, and stay consistent.  
+Built with the **MERN stack** and secured with **JWT authentication**.
 
-## 📚 API (Auth required unless noted; header: `Authorization: Bearer <token>`)
-
-### User (prefix `/api/user`)
-- POST `/signup` — Register
-- POST `/signin` — Login
-- GET `/dashboard` — User dashboard summary
-- GET `/workout?date=YYYY-MM-DD` — Workouts for a date
-- GET `/workouts` — Paginated/filterable list
-- POST `/workout` — Create workout
-- PUT `/workout/:id` — Update workout
-- DELETE `/workout/:id` — Delete workout
-
-### Blogs (prefix `/api/blogs`)
-- POST `/` — Create blog (auth)
-- PUT `/:id` — Update blog (auth)
-- GET `/` — List blogs (public)
-- GET `/:id` — Blog by ID (public)
-
-### Contact (prefix `/api/contact`)
-- POST `/` — Create message
-- GET `/my` — My messages
-- GET `/` — All messages (admin)
-- PATCH `/:id/status` — Update status (admin)
-
-### PRs (prefix `/api/prs`)
-- GET `/` — List PRs
-- POST `/` — Create PR
-- DELETE `/:id` — Delete PR
-
-### Goals (prefix `/api/goals`)
-- GET `/` — Get goals
-- PUT `/` — Update goals
-
-## 🌐 Deployment
-
-Frontend (Netlify)
-- Configured via `netlify.toml`:
-  - Base: `client`, Command: `npm run build`, Publish: `build`
-  - SPA redirects: `/* -> /index.html`
-  - Env: `REACT_APP_API_URL`, `REACT_APP_BACKEND_URL`
-
-Backend (Render)
-- Uses `process.env.PORT` (fallback 8080)
-- CORS allows: `https://fitness-track40.netlify.app` and `http://localhost:3000`
-- Env required: `MONGODB_URL`, `JWT`, SMTP vars (optional)
-
-## 🎨 Minimal Palette
-- Primary: `#007AFF`
-- Secondary: `#5B86E5`
-- Text Primary: `#404040`
-- Shadow: `#00000020`
-
-## 🗂️ Structure
-```
-Fitness Tracker/
-  client/  # React app
-  server/  # Express API + cron jobs
-  netlify.toml
-```
-
-## 🤝 Contributing
-PRs welcome! Please open an issue or a PR for suggestions/improvements.
+[![Frontend - Netlify](https://img.shields.io/badge/Frontend-Netlify-00C7B7?logo=netlify&logoColor=white)](https://fitness-track40.netlify.app)
+[![Backend - Render](https://img.shields.io/badge/Backend-Render-46E3B7?logo=render&logoColor=white)](https://fitness-tracker-pklg.onrender.com)
+![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
+![Express](https://img.shields.io/badge/Express-5-000000?logo=express&logoColor=white)
+![MongoDB](https://img.shields.io/badge/MongoDB-8-47A248?logo=mongodb&logoColor=white)
+![MUI](https://img.shields.io/badge/MUI-7-007FFF?logo=mui&logoColor=white)
 
 ---
-Made with ❤️ and discipline.
-EOF
 
-git add README.md
-git commit -m "docs: add sexy README with features, tech stack, API and deployment"
-git push origin main
-```
+## 🔗 Live Demo
+- **Web App**: [fitness-track40.netlify.app](https://fitness-track40.netlify.app)  
+- **API Base**: [fitness-tracker-pklg.onrender.com/api](https://fitness-tracker-pklg.onrender.com/api)
 
-- Want me to also add a few dashboard screenshots later? I can capture and commit them.
+---
 
-- Added a comprehensive README with emojis, minimal palette, live links, setup, env vars, API docs, deployment, and a screenshot reference.
+## ✨ Features
+- 🔐 **Authentication** – Email/password signup & login with JWT
+- 🏋️ **Workouts** – CRUD operations, daily view & history filters
+- 📊 **Dashboard** – Stats, weekly trends & category pie chart
+- 📝 **Blogs** – Create, update & browse posts
+- 🎥 **Tutorials** – Curated, grouped workout tutorials
+- ✉️ **Contact** – Send messages; admin can review & update status
+- 🏆 **Personal Records** – Track PRs (create/list/delete)
+- 🎯 **Goals** – Get/update weekly goals (calories, workouts)
+- 🔔 **Email Notifications** – Weekly summaries & daily nudges (cron + SMTP)
+- 💾 **Persistence** – Redux state saved between sessions
+
+---
+
+## 🛠 Tech Stack
+
+**Frontend**
+- React 19, React Router 7, Redux Toolkit 2, redux-persist  
+- MUI 7, MUI X Charts, styled-components 6  
+- axios, dayjs
+
+**Backend**
+- Node.js, Express 5, Mongoose 8  
+- JWT, bcrypt, cors, dotenv, node-cron, nodemailer  
+
+**Database**
+- MongoDB
+
+**Deployment**
+- Netlify (frontend)  
+- Render (backend)
+
+**Tooling**
+- CRA (react-scripts)
+
+---
+
+## 🖼 Screenshot
+![Authentication](client/src/utils/Images/AuthImage.jpg)
+
+---
+
+## 🚀 Getting Started
+
+**1️⃣ Clone the repository**
+```bash
+git clone https://github.com/yashwardhan04/Fitness-track.git
+cd "Fitness Tracker"
