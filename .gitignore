@@ -42,6 +42,7 @@ Icon?
 .env.test.local
 .env.production.local
 server/.env
+client/.env
 
 npm-debug.log*
 yarn-debug.log*

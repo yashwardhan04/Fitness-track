@@ -22,6 +22,15 @@ const UserSchema = new mongoose.Schema(
     age: {
       type: Number,
     },
+    role: {
+      type: String,
+      enum: ["user", "admin"],
+      default: "user",
+    },
+    goals: {
+      weeklyCalories: { type: Number, default: 0 },
+      weeklyWorkouts: { type: Number, default: 0 },
+    },
   },
   { timestamps: true }
 );

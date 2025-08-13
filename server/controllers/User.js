@@ -4,12 +4,13 @@ import dotenv from "dotenv";
 import { createError } from "../error.js";
 import User from "../models/User.js";
 import Workout from "../models/Workout.js";
+import mongoose from "mongoose";
 
 dotenv.config();
 
 export const UserRegister = async (req, res, next) => {
   try {
-    const { email, password, name, img } = req.body;
+    const { email, password, name, img, profileType, role } = req.body;
 
     // Check if the email is in use
     const existingUser = await User.findOne({ email }).exec();
@@ -20,11 +21,15 @@ export const UserRegister = async (req, res, next) => {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync(password, salt);
 
+    // Determine role; support both `profileType` (from client) and `role`
+    const requestedRole = (role || profileType || "user").toString().toLowerCase() === "admin" ? "admin" : "user";
+
     const user = new User({
       name,
       email,
       password: hashedPassword,
       img,
+      role: requestedRole,
     });
     const createdUser = await user.save();
     const token = jwt.sign({ id: createdUser._id }, process.env.JWT, {
@@ -81,6 +86,12 @@ export const getUserDashboard = async (req, res, next) => {
       currentDateFormatted.getMonth(),
       currentDateFormatted.getDate() + 1
     );
+    // Start of the 7-day window for weekly aggregations (including today)
+    const startOfLast7Days = new Date(
+      startToday.getFullYear(),
+      startToday.getMonth(),
+      startToday.getDate() - 6
+    );
 
     //calculte total calories burnt
     const totalCaloriesBurnt = await Workout.aggregate([
@@ -105,9 +116,9 @@ export const getUserDashboard = async (req, res, next) => {
         ? totalCaloriesBurnt[0].totalCaloriesBurnt / totalWorkouts
         : 0;
 
-    // Fetch category of workouts
+    // Fetch category calories for the last 7 days
     const categoryCalories = await Workout.aggregate([
-      { $match: { user: user._id, date: { $gte: startToday, $lt: endToday } } },
+      { $match: { user: user._id, date: { $gte: startOfLast7Days, $lt: endToday } } },
       {
         $group: {
           _id: "$category",
@@ -116,8 +127,7 @@ export const getUserDashboard = async (req, res, next) => {
       },
     ]);
 
-    //Format category data for pie chart
-
+    // Format category data for pie chart (weekly)
     const pieChartData = categoryCalories.map((category, index) => ({
       id: index,
       value: category.totalCaloriesBurnt,
@@ -204,7 +214,7 @@ export const getWorkoutsByDate = async (req, res, next) => {
     );
 
     const todaysWorkouts = await Workout.find({
-      userId: userId,
+      user: userId,
       date: { $gte: startOfDay, $lt: endOfDay },
     });
     const totalCaloriesBurnt = todaysWorkouts.reduce(
@@ -308,4 +318,77 @@ const calculateCaloriesBurnt = (workoutDetails) => {
   const weightInKg = parseInt(workoutDetails.weight);
   const caloriesBurntPerMinute = 5; // Sample value, actual calculation may vary
   return durationInMinutes * caloriesBurntPerMinute * weightInKg;
+};
+
+export const getWorkoutsList = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const {
+      page = 1,
+      limit = 10,
+      q = "",
+      category,
+      from,
+      to,
+    } = req.query;
+
+    const filters = { user: userId };
+    if (q) filters.workoutName = { $regex: q, $options: "i" };
+    if (category) filters.category = category;
+    if (from || to) {
+      filters.date = {};
+      if (from) filters.date.$gte = new Date(from);
+      if (to) filters.date.$lte = new Date(to);
+    }
+
+    const skip = (parseInt(page) - 1) * parseInt(limit);
+
+    const [items, total] = await Promise.all([
+      Workout.find(filters).sort({ date: -1 }).skip(skip).limit(parseInt(limit)).lean(),
+      Workout.countDocuments(filters),
+    ]);
+
+    res.json({
+      items,
+      total,
+      page: parseInt(page),
+      pages: Math.ceil(total / parseInt(limit)),
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateWorkout = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const allowed = ["category", "workoutName", "sets", "reps", "weight", "duration", "date"];
+    const update = {};
+    for (const key of allowed) {
+      if (req.body[key] !== undefined) update[key] = req.body[key];
+    }
+
+    const workout = await Workout.findOneAndUpdate(
+      { _id: id, user: userId },
+      update,
+      { new: true }
+    );
+    if (!workout) return next(createError(404, "Workout not found"));
+    res.json(workout);
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteWorkout = async (req, res, next) => {
+  try {
+    const userId = req.user?.id;
+    const { id } = req.params;
+    const deleted = await Workout.findOneAndDelete({ _id: id, user: userId });
+    if (!deleted) return next(createError(404, "Workout not found"));
+    res.json({ success: true });
+  } catch (err) {
+    next(err);
+  }
 };

@@ -5,7 +5,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';  // Updated import
 import { DateCalendar } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { Box } from '@mui/material';
+// Box unused
 
 
 const containerStyle = {
@@ -29,7 +29,7 @@ const containerStyle = {
 };
 
 const leftStyle = {
-  flex: 2,
+  flex: '1 1 auto',
   padding: '2rem 1.5rem',
   borderRight: `1px solid ${lightTheme.primary}22`,
   display: 'flex',
@@ -37,13 +37,12 @@ const leftStyle = {
   gap: '2rem',
 };
 const rightStyle = {
-  flex: 1,
-  padding: '2rem 1.5rem',
+  flex: '0 0 360px',
+  maxWidth: '360px',
+  padding: '1.5rem 1rem',
   display: 'flex',
   flexDirection: 'column',
-  gap: '2rem',
-  overflowY: 'auto',         // 🔥 Scrollbar!
-  maxHeight: 'calc(100vh - 100px)', // keeps it from overflowing out of viewport
+  gap: '1.5rem',
   backgroundColor: lightTheme.bgLight,
 };
 
@@ -60,7 +59,6 @@ const recentEntriesStyle = {
 
 const blogListStyle = {
   listStyle: 'none',
-  padding: 0,
   margin: 0,
   maxHeight: 400,
   overflowY: 'auto',
@@ -95,7 +93,6 @@ const blogContentStyle = {
   padding: '1rem',
   color: lightTheme.text_primary,
   width: '100%',
-  maxWidth: '350px', // Consistent max-width
   marginTop: '1.5rem',
 };
 const formStyle = {
@@ -136,10 +133,10 @@ const buttonStyle = {
 const calendarContainerStyle = {
   background: lightTheme.card,
   borderRadius: '10px',
-  padding: '1rem',
+  padding: '0.75rem',
   width: '100%',
   boxShadow: `0 1px 4px ${lightTheme.shadow}`,
-  minHeight: '150px',
+  minHeight: '320px',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
@@ -343,11 +340,10 @@ const Blogs = () => {
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <div style={calendarContainerStyle}>
             <DateCalendar
-  sx={{ width: '100%' }}
-  value={selectedDate}
-  onChange={date => setSelectedDate(date)}
-/>
-
+              sx={{ width: '100%', maxWidth: 340, minWidth: 280 }}
+              value={selectedDate}
+              onChange={date => setSelectedDate(date)}
+            />
           </div>
         </LocalizationProvider>
 

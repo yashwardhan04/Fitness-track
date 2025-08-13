@@ -5,6 +5,7 @@ import Button from "./Button";
 import { UserSignUp } from "../api";
 import { useDispatch } from "react-redux";
 import { loginSuccess } from "../redux/reducers/userSlice";
+import { NavLink } from "react-router-dom";
 
 const Container = styled.div`
   width: 100%;
@@ -24,6 +25,33 @@ const Span = styled.div`
   color: ${({ theme }) => theme.text_secondary + 90};
 `;
 
+// Styled controls to match app theme and TextInput labeling
+const FieldGroup = styled.div`
+  margin: 8px 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+`;
+const FieldLabel = styled.label`
+  font-size: 12px;
+  color: ${({ theme }) => theme.text_primary};
+  padding: 0 4px;
+`;
+const RadioGroup = styled.div`
+  display: flex;
+  gap: 16px;
+`;
+const RadioOption = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: ${({ theme }) => theme.text_secondary};
+  font-size: 14px;
+  input {
+    accent-color: ${({ theme }) => theme.primary};
+  }
+`;
+
 const SignUp = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(false);
@@ -31,6 +59,9 @@ const SignUp = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [profileType, setProfileType] = useState("user");
+
+  const user = JSON.parse(localStorage.getItem("fittrack-user") || "{}");
 
   const validateInputs = () => {
     if (!name || !email || !password) {
@@ -40,33 +71,38 @@ const SignUp = () => {
     return true;
   };
 
- const handelSignUp = async () => {
-  setLoading(true);
-  setButtonDisabled(true);
+  const handelSignUp = async () => {
+    setLoading(true);
+    setButtonDisabled(true);
 
-  if (validateInputs()) {
-    try {
-      const res = await UserSignUp({ name, email, password });
+    if (validateInputs()) {
+      try {
+        const res = await UserSignUp({ name, email, password, profileType });
 
-      if (!res || !res.data) {
-        throw new Error("Invalid response from server");
+        if (!res || !res.data) {
+          throw new Error("Invalid response from server");
+        }
+
+        dispatch(loginSuccess(res.data));
+        alert("Account Created Success");
+      } catch (err) {
+        console.error(err);
+        const msg = err?.response?.data?.message || "Signup failed";
+        alert(msg);
+      } finally {
+        setLoading(false);
+        setButtonDisabled(false);
       }
-
-      dispatch(loginSuccess(res.data));
-      alert("Account Created Success");
-    } catch (err) {
-      console.error(err);
-      const msg = err?.response?.data?.message || "Signup failed";
-      alert(msg);
-    } finally {
+    } else {
       setLoading(false);
       setButtonDisabled(false);
     }
-  } else {
-    setLoading(false);
-    setButtonDisabled(false);
-  }
-};
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handelSignUp();
+  };
 
   return (
     <Container>
@@ -74,13 +110,7 @@ const SignUp = () => {
         <Title>Create New Account 👋</Title>
         <Span>Please enter details to create a new account</Span>
       </div>
-      <div
-        style={{
-          display: "flex",
-          gap: "20px",
-          flexDirection: "column",
-        }}
-      >
+      <form onSubmit={handleSubmit}>
         <TextInput
           label="Full name"
           placeholder="Enter your full name"
@@ -100,13 +130,39 @@ const SignUp = () => {
           value={password}
           handelChange={(e) => setPassword(e.target.value)}
         />
+        <FieldGroup>
+          <FieldLabel>Profile Type</FieldLabel>
+          <RadioGroup>
+            <RadioOption>
+              <input
+                type="radio"
+                value="user"
+                checked={profileType === "user"}
+                onChange={() => setProfileType("user")}
+              />
+              <span>User</span>
+            </RadioOption>
+            <RadioOption>
+              <input
+                type="radio"
+                value="admin"
+                checked={profileType === "admin"}
+                onChange={() => setProfileType("admin")}
+              />
+              <span>Admin</span>
+            </RadioOption>
+          </RadioGroup>
+        </FieldGroup>
         <Button
           text="SignUp"
           onClick={handelSignUp}
           isLoading={loading}
           isDisabled={buttonDisabled}
         />
-      </div>
+      </form>
+      {user.profileType === "admin" && (
+        <NavLink to="/my-messages">My Messages</NavLink>
+      )}
     </Container>
   );
 };

@@ -130,6 +130,7 @@ const MobileMenu = styled.ul`
 const Navbar = ({ currentUser }) => {
   const dispatch = useDispatch();
   const [isOpen, setisOpen] = useState(false);
+  const user = currentUser || JSON.parse(localStorage.getItem("fittrack-user") || "{}");
   return (
     <Nav>
       <NavContainer>
@@ -144,17 +145,27 @@ const Navbar = ({ currentUser }) => {
         <MobileMenu isOpen={isOpen}>
           <Navlink to="/">Dashboard</Navlink>
           <Navlink to="/workouts">Workouts</Navlink>
+          <Navlink to="/workout-history">Workout History</Navlink>
           <Navlink to="/tutorials">Tutorials</Navlink>
           <Navlink to="/blogs">Blogs</Navlink>
           <Navlink to="/contact">Contact</Navlink>
+          <Navlink to="/prs">PRs</Navlink>
+          {user?.role === "admin" || user?.profileType === "admin" ? (
+            <Navlink to="/my-messages">Support Inbox</Navlink>
+          ) : null}
         </MobileMenu>
 
         <NavItems>
           <Navlink to="/">Dashboard</Navlink>
           <Navlink to="/workouts">Workouts</Navlink>
+          <Navlink to="/workout-history">Workout History</Navlink>
           <Navlink to="/tutorials">Tutorials</Navlink>
           <Navlink to="/blogs">Blogs</Navlink>
           <Navlink to="/contact">Contact</Navlink>
+          <Navlink to="/prs">PRs</Navlink>
+          {user?.role === "admin" || user?.profileType === "admin" ? (
+            <Navlink to="/my-messages">Support Inbox</Navlink>
+          ) : null}
         </NavItems>
 
         <UserContainer>
