@@ -16,10 +16,10 @@ const app = express();
 
 // CORS
 const corsOptions = {
-  origin: 'fitness-track40.netlify.app',
+  origin: ['https://fitness-track40.netlify.app', 'http://localhost:3000'],
   credentials: true,
-  // methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
-  // allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ['GET','POST','PUT','PATCH','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 };
 app.use(cors(corsOptions));
 
