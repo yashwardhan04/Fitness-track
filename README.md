@@ -55,14 +55,14 @@ Built with the **MERN stack** and secured with **JWT authentication**.
 
 ---
 
-## 🖼 Screenshot
-![Authentication](client/src/utils/Images/AuthImage.jpg)
-
----
-
 ## 🚀 Getting Started
 
-**1️⃣ Clone the repository**
+You can either **clone the repository** or **download the ZIP** and run locally.
+
+**1️⃣ Clone or Download**
 ```bash
+# Clone
 git clone https://github.com/yashwardhan04/Fitness-track.git
 cd "Fitness Tracker"
+
+# OR download ZIP from GitHub and extract it
