@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8080'; // Add this at the top
+const BASE_URL = 'https://fitness-tracker-pklg.onrender.com'; // Add this at the top
 
 // Blog API utility functions
 
